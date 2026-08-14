@@ -3,6 +3,7 @@ import {
   getAmstar2Metadata,
   getHealth,
 } from './api/amstarApi';
+import PreAppraisalSetup from './components/PreAppraisalSetup';
 import './App.css';
 
 function App() {
@@ -182,6 +183,12 @@ function App() {
               </ul>
             </section>
           </div>
+
+          <PreAppraisalSetup
+            defaultCriticalDomains={
+              metadata.proposedDefaultCriticalDomains
+            }
+          />
 
           <section className="notice">
             <h2>Forskningsmessig sikkerhet</h2>

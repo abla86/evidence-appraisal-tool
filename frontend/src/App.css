@@ -215,3 +215,187 @@ h3 {
     grid-template-columns: 1fr;
   }
 }
+.setup-card {
+  margin-top: 1.25rem;
+  padding: 1.75rem;
+  border: 1px solid #d7dee8;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 12px 32px rgb(31 50 81 / 7%);
+}
+
+.setup-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.setup-introduction {
+  max-width: 780px;
+  color: #52647a;
+  line-height: 1.6;
+}
+
+.local-only {
+  height: fit-content;
+  padding: 0.4rem 0.65rem;
+  border-radius: 999px;
+  background: #eef2f7;
+  color: #52647a;
+  font-size: 0.8rem;
+  font-weight: 750;
+}
+
+.notice-inline {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border-left: 4px solid #315b8a;
+  background: #f3f7fb;
+  line-height: 1.5;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.form-field,
+.rationale-field {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.form-field label,
+.rationale-field label,
+.critical-fieldset legend {
+  font-weight: 750;
+}
+
+.form-field input,
+.rationale-field textarea {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid #aeb9c8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #172033;
+}
+
+.form-field input:focus,
+.rationale-field textarea:focus {
+  outline: 3px solid rgb(49 91 138 / 20%);
+  border-color: #315b8a;
+}
+
+[aria-invalid="true"] {
+  border-color: #b42318 !important;
+}
+
+.field-error {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+
+.critical-fieldset {
+  margin: 1.75rem 0;
+  padding: 0;
+  border: 0;
+}
+
+.fieldset-help {
+  color: #52647a;
+  line-height: 1.5;
+}
+
+.domain-list {
+  display: grid;
+  gap: 0.7rem;
+}
+
+.domain-row {
+  padding: 0.9rem 1rem;
+  border: 1px solid #d7dee8;
+  border-radius: 12px;
+  background: #fafbfd;
+}
+
+.domain-row-selected {
+  border-color: #9fb5cd;
+  background: #f5f8fc;
+}
+
+.domain-choice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.domain-choice input {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.1rem;
+}
+
+.domain-choice small {
+  display: block;
+  margin-top: 0.2rem;
+  color: #58708e;
+  font-weight: 600;
+}
+
+.rationale-field {
+  margin: 1rem 0 0 1.85rem;
+}
+
+.rationale-field textarea {
+  resize: vertical;
+}
+
+.primary-button {
+  padding: 0.8rem 1.1rem;
+  border: 0;
+  border-radius: 9px;
+  background: #254d78;
+  color: #ffffff;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.primary-button:hover {
+  background: #193b60;
+}
+
+.primary-button:focus-visible {
+  outline: 3px solid rgb(49 91 138 / 35%);
+  outline-offset: 3px;
+}
+
+.confirmation {
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 1.25rem;
+  padding: 1rem;
+  border: 1px solid #9dccb3;
+  border-radius: 10px;
+  background: #effaf4;
+  color: #12633a;
+}
+
+@media (max-width: 760px) {
+  .setup-heading {
+    flex-direction: column;
+  }
+
+  .field-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .rationale-field {
+    margin-left: 0;
+  }
+}
