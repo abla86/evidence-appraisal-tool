@@ -18,6 +18,7 @@ import {
 vi.mock('./api/amstarApi', () => ({
   getHealth: vi.fn(),
   getAmstar2Metadata: vi.fn(),
+  validateAmstar2Assessment: vi.fn(),
 }));
 
 const metadata = {

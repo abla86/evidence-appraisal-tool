@@ -25,3 +25,26 @@ export function getHealth() {
 export function getAmstar2Metadata() {
   return request('/api/amstar2/metadata');
 }
+export async function validateAmstar2Assessment(
+  assessment,
+) {
+  const response = await fetch(
+    `${API_BASE_URL}/api/amstar2/validate`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(assessment),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `API validation failed with status ${response.status}.`,
+    );
+  }
+
+  return response.json();
+}

@@ -3,6 +3,7 @@ import {
   getAmstar2Metadata,
   getHealth,
 } from './api/amstarApi';
+import AssessmentForm from './components/AssessmentForm';
 import PreAppraisalSetup from './components/PreAppraisalSetup';
 import './App.css';
 
@@ -10,6 +11,8 @@ function App() {
   const [metadata, setMetadata] = useState(null);
   const [apiStatus, setApiStatus] = useState('Checking');
   const [error, setError] = useState('');
+  const [assessmentSetup, setAssessmentSetup] =
+    useState(null);
 
   useEffect(() => {
     let active = true;
@@ -188,7 +191,14 @@ function App() {
             defaultCriticalDomains={
               metadata.proposedDefaultCriticalDomains
             }
+            onConfirmed={setAssessmentSetup}
           />
+
+          {assessmentSetup && (
+            <AssessmentForm
+              setup={assessmentSetup}
+            />
+          )}
 
           <section className="notice">
             <h2>Forskningsmessig sikkerhet</h2>
