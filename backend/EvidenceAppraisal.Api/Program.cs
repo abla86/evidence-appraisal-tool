@@ -36,6 +36,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors("LocalReactFrontend");
 
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapGet("/", () => Results.Ok(new
 {
     application = "Evidence Appraisal Tool API",
@@ -153,6 +156,8 @@ app.MapPost(
         }
     }
 );
+
+app.MapFallbackToFile("index.html");
 
 app.Run();
 

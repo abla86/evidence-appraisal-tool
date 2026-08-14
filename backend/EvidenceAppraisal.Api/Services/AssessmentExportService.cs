@@ -504,6 +504,11 @@ public sealed class AssessmentExportService
                 GlobalFontSettings
                     .UseWindowsFontsUnderWindows = true;
             }
+            else
+            {
+                GlobalFontSettings.FontResolver =
+                    new DejaVuFontResolver();
+            }
 
             _pdfConfigured = true;
         }
