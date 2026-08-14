@@ -48,3 +48,27 @@ export async function validateAmstar2Assessment(
 
   return response.json();
 }
+export async function exportAmstar2Assessment(
+  assessment,
+  format,
+) {
+  const response = await fetch(
+    `${API_BASE_URL}/api/amstar2/export/${format}`,
+    {
+      method: 'POST',
+      headers: {
+        Accept: '*/*',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(assessment),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(
+      `Export failed with status ${response.status}.`,
+    );
+  }
+
+  return response.blob();
+}

@@ -6,6 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddSingleton<Amstar2ValidationService>();
+builder.Services.AddSingleton<AssessmentReportFactory>();
+builder.Services.AddSingleton<AssessmentExportService>();
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
@@ -95,6 +97,60 @@ app.MapPost(
         );
 
         return Results.Ok(validation);
+    }
+);
+
+app.MapPost(
+    "/api/amstar2/export/{format}",
+    (
+        string format,
+        Amstar2Assessment assessment,
+        Amstar2ValidationService validationService,
+        AssessmentReportFactory reportFactory,
+        AssessmentExportService exportService
+    ) =>
+    {
+        var validation = validationService.Validate(
+            assessment
+        );
+
+        if (!validation.IsValid)
+        {
+            return Results.BadRequest(validation);
+        }
+
+        try
+        {
+            var report = reportFactory.Create(
+                assessment
+            );
+
+            var file = exportService.Create(
+                report,
+                format
+            );
+
+            var fileName =
+                $"amstar2-{assessment.Id}.{file.Extension}";
+
+            return Results.File(
+                file.Content,
+                file.ContentType,
+                fileName
+            );
+        }
+        catch (
+            Exception exception
+        ) when (
+            exception is ArgumentException or
+            InvalidOperationException
+        )
+        {
+            return Results.BadRequest(new
+            {
+                error = exception.Message
+            });
+        }
     }
 );
 

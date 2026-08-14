@@ -602,3 +602,54 @@ h3 {
     flex-direction: column;
   }
 }
+.export-section {
+  align-items: stretch;
+}
+
+.export-actions {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.export-choice {
+  display: grid;
+  gap: 0.3rem;
+  min-height: 5rem;
+  text-align: left;
+}
+
+.export-choice span {
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.additional-export {
+  margin-top: 0.85rem;
+}
+
+.additional-export summary {
+  width: fit-content;
+  cursor: pointer;
+  font-weight: 750;
+}
+
+.text-button {
+  margin-top: 0.65rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #254d78;
+  font-weight: 750;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (max-width: 760px) {
+  .export-actions {
+    grid-template-columns: 1fr;
+  }
+}

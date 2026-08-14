@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
+  exportAmstar2Assessment,
   validateAmstar2Assessment,
 } from '../api/amstarApi';
 
@@ -44,6 +45,10 @@ export default function FinalAssessment({
     useState(null);
   const [submitting, setSubmitting] =
     useState(false);
+  const [exporting, setExporting] =
+    useState('');
+  const [exportError, setExportError] =
+    useState('');
 
   const summary = useMemo(() => {
     const weaknesses = assessment.items
@@ -132,6 +137,50 @@ export default function FinalAssessment({
     } finally {
       setSubmitting(false);
     }
+  }
+
+  async function exportDocument(
+    format,
+    extension,
+  ) {
+    if (!validatedAssessment) {
+      return;
+    }
+
+    setExporting(format);
+    setExportError('');
+
+    try {
+      const blob =
+        await exportAmstar2Assessment(
+          validatedAssessment,
+          format,
+        );
+
+      downloadBlob(blob, extension);
+    } catch {
+      setExportError(
+        'Rapporten kunne ikke lastes ned. Kontroller at API-et kjører og prøv igjen.',
+      );
+    } finally {
+      setExporting('');
+    }
+  }
+
+  function downloadBlob(blob, extension) {
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+
+    anchor.href = url;
+    anchor.download =
+      `${safeFileName(
+        validatedAssessment.reviewTitle,
+      )}-amstar2.${extension}`;
+
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
   }
 
   function exportJson() {
@@ -287,31 +336,99 @@ export default function FinalAssessment({
       </form>
 
       {validatedAssessment && (
-        <div
-          className="confirmation export-panel"
-          role="status"
-          aria-live="polite"
+        <section
+          className="confirmation export-section"
+          aria-labelledby="export-heading"
         >
           <div>
-            <strong>
-              Sluttvurderingen er validert.
+            <strong id="export-heading">
+              Sluttvurderingen er validert
             </strong>
 
             <span>
-              JSON-filen inneholder hele den
-              dokumenterte vurderingen. Filen
-              lagres lokalt på datamaskinen.
+              Velg ønsket rapportformat. Alle
+              rapportene bygger på den samme
+              validerte vurderingen.
             </span>
           </div>
 
-          <button
-            className="secondary-button"
-            type="button"
-            onClick={exportJson}
-          >
-            Last ned vurdering som JSON
-          </button>
-        </div>
+          {exportError && (
+            <p
+              className="field-error"
+              role="alert"
+            >
+              {exportError}
+            </p>
+          )}
+
+          <div className="export-actions">
+            <button
+              className="primary-button export-choice"
+              type="button"
+              disabled={Boolean(exporting)}
+              onClick={() =>
+                exportDocument('word', 'docx')
+              }
+            >
+              <strong>
+                {exporting === 'word'
+                  ? 'Lager Word-rapport …'
+                  : 'Last ned Word-rapport'}
+              </strong>
+              <span>
+                Anbefalt for videre akademisk arbeid
+              </span>
+            </button>
+
+            <button
+              className="secondary-button export-choice"
+              type="button"
+              disabled={Boolean(exporting)}
+              onClick={() =>
+                exportDocument('pdf', 'pdf')
+              }
+            >
+              <strong>
+                {exporting === 'pdf'
+                  ? 'Lager PDF …'
+                  : 'Last ned PDF'}
+              </strong>
+              <span>
+                Ferdig rapport for deling og arkivering
+              </span>
+            </button>
+
+            <button
+              className="secondary-button export-choice"
+              type="button"
+              disabled={Boolean(exporting)}
+              onClick={() =>
+                exportDocument('excel', 'xlsx')
+              }
+            >
+              <strong>
+                {exporting === 'excel'
+                  ? 'Lager Excel-fil …'
+                  : 'Last ned Excel'}
+              </strong>
+              <span>
+                Strukturert oversikt over alle 16 punkter
+              </span>
+            </button>
+          </div>
+
+          <details className="additional-export">
+            <summary>Flere eksportvalg</summary>
+
+            <button
+              className="text-button"
+              type="button"
+              onClick={exportJson}
+            >
+              Last ned vurdering som JSON
+            </button>
+          </details>
+        </section>
       )}
     </section>
   );

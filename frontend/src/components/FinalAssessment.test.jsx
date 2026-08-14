@@ -18,6 +18,7 @@ import {
 
 vi.mock('../api/amstarApi', () => ({
   validateAmstar2Assessment: vi.fn(),
+  exportAmstar2Assessment: vi.fn(),
 }));
 
 const assessment = {
@@ -160,6 +161,24 @@ describe('FinalAssessment', () => {
       await screen.findByText(
         /sluttvurderingen er validert/i,
       ),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('button', {
+        name: /last ned Word-rapport/i,
+      }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('button', {
+        name: /last ned PDF/i,
+      }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('button', {
+        name: /last ned Excel/i,
+      }),
     ).toBeInTheDocument();
 
     expect(
