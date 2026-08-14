@@ -7,6 +7,7 @@ import {
   describe,
   expect,
   it,
+  vi,
 } from 'vitest';
 import PreAppraisalSetup from './PreAppraisalSetup';
 
@@ -50,9 +51,12 @@ describe('PreAppraisalSetup', () => {
   });
 
   it('confirms a completely documented setup', () => {
+    const onConfirmed = vi.fn();
+
     render(
       <PreAppraisalSetup
         defaultCriticalDomains={[2]}
+        onConfirmed={onConfirmed}
       />,
     );
 
@@ -101,5 +105,17 @@ describe('PreAppraisalSetup', () => {
     expect(
       screen.getByText(/1 kritiske domener/i),
     ).toBeInTheDocument();
+
+    expect(onConfirmed).toHaveBeenCalledWith({
+      reviewTitle: 'Eksempeloversikt',
+      reviewer: 'Forsker 01',
+      criticalDomains: [
+        {
+          itemNumber: 2,
+          rationale:
+            'Domenet er forhåndsdefinert i protokollen.',
+        },
+      ],
+    });
   });
 });

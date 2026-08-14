@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 
 export default function PreAppraisalSetup({
   defaultCriticalDomains,
+  onConfirmed,
 }) {
   const availableItems = useMemo(
     () => Array.from({ length: 16 }, (_, index) => index + 1),
@@ -70,7 +71,20 @@ export default function PreAppraisalSetup({
     setConfirmed(false);
 
     if (validate()) {
+      const setup = {
+        reviewTitle: reviewTitle.trim(),
+        reviewer: reviewer.trim(),
+        criticalDomains: criticalDomains.map(
+          (itemNumber) => ({
+            itemNumber,
+            rationale:
+              rationales[itemNumber].trim(),
+          }),
+        ),
+      };
+
       setConfirmed(true);
+      onConfirmed(setup);
     }
   }
 
