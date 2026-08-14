@@ -1,122 +1,201 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from 'react';
+import {
+  getAmstar2Metadata,
+  getHealth,
+} from './api/amstarApi';
+import './App.css';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [metadata, setMetadata] = useState(null);
+  const [apiStatus, setApiStatus] = useState('Checking');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadApplicationData() {
+      try {
+        const [health, instrumentMetadata] =
+          await Promise.all([
+            getHealth(),
+            getAmstar2Metadata(),
+          ]);
+
+        if (!active) {
+          return;
+        }
+
+        setApiStatus(health.status);
+        setMetadata(instrumentMetadata);
+      } catch {
+        if (!active) {
+          return;
+        }
+
+        setApiStatus('Unavailable');
+        setError(
+          'Kunne ikke koble til API-et. Kontroller at backend kjører på port 5237.',
+        );
+      }
+    }
+
+    loadApplicationData();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
+    <main className="app-shell">
+      <header className="hero">
         <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
+          <p className="eyebrow">
+            Forskningsprototype
+          </p>
+
+          <h1>Evidence Appraisal Tool</h1>
+
+          <p className="hero-text">
+            Transparent og etterprøvbar støtte for
+            strukturert kritisk vurdering.
           </p>
         </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
+
+        <div
+          className={`status status-${apiStatus.toLowerCase()}`}
+          role="status"
+          aria-live="polite"
         >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
+          <span aria-hidden="true" />
+          API: {apiStatus}
         </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+      </header>
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+      {error && (
+        <section
+          className="message message-error"
+          role="alert"
+        >
+          <h2>Tilkoblingsfeil</h2>
+          <p>{error}</p>
+        </section>
+      )}
+
+      {!metadata && !error && (
+        <section
+          className="message"
+          aria-live="polite"
+        >
+          <p>Laster metodeinformasjon …</p>
+        </section>
+      )}
+
+      {metadata && (
+        <>
+          <section className="instrument-card">
+            <div>
+              <p className="eyebrow">
+                Aktiv modul
+              </p>
+
+              <h2>
+                {metadata.instrumentName}{' '}
+                <span>
+                  ({metadata.instrumentVersion})
+                </span>
+              </h2>
+
+              <p>
+                Instrumentet inneholder{' '}
+                <strong>
+                  {metadata.totalItems} punkter
+                </strong>
+                .
+              </p>
+            </div>
+
+            <div className="critical-domains">
+              <h3>
+                Foreslåtte kritiske standarddomener
+              </h3>
+
+              <ul aria-label="Foreslåtte kritiske domener">
+                {metadata.proposedDefaultCriticalDomains.map(
+                  (item) => (
+                    <li key={item}>
+                      Punkt {item}
+                    </li>
+                  ),
+                )}
+              </ul>
+            </div>
+          </section>
+
+          <section className="notice notice-warning">
+            <h2>Metodisk avgrensning</h2>
+            <p>{metadata.criticalDomainNotice}</p>
+            <p>
+              <strong>Viktig:</strong>{' '}
+              {metadata.scoringNotice}
+            </p>
+          </section>
+
+          <div className="capability-grid">
+            <section className="capability-card">
+              <h2>Tilgjengelig nå</h2>
+
+              <ul>
+                {metadata.currentCapabilities.map(
+                  (capability) => (
+                    <li key={capability}>
+                      <span
+                        className="icon icon-available"
+                        aria-hidden="true"
+                      >
+                        ✓
+                      </span>
+                      {capability}
+                    </li>
+                  ),
+                )}
+              </ul>
+            </section>
+
+            <section className="capability-card">
+              <h2>Ikke tilgjengelig ennå</h2>
+
+              <ul>
+                {metadata.unavailableCapabilities.map(
+                  (capability) => (
+                    <li key={capability}>
+                      <span
+                        className="icon icon-unavailable"
+                        aria-hidden="true"
+                      >
+                        —
+                      </span>
+                      {capability}
+                    </li>
+                  ),
+                )}
+              </ul>
+            </section>
+          </div>
+
+          <section className="notice">
+            <h2>Forskningsmessig sikkerhet</h2>
+            <p>
+              Denne versjonen beregner ingen
+              kvalitetskonklusjon, lagrer ingen
+              forskningsdata og erstatter ikke
+              forskerens metodiske vurdering.
+            </p>
+          </section>
+        </>
+      )}
+    </main>
+  );
 }
 
-export default App
+export default App;
