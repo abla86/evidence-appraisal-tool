@@ -1,5 +1,8 @@
 # Evidence Appraisal Tool
 
+[![CI](https://github.com/abla86/evidence-appraisal-tool/actions/workflows/ci.yml/badge.svg)](https://github.com/abla86/evidence-appraisal-tool/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/abla86/evidence-appraisal-tool/actions/workflows/codeql.yml/badge.svg)](https://github.com/abla86/evidence-appraisal-tool/actions/workflows/codeql.yml)
+
 ## Live demo
 
 [Open Evidence Appraisal Tool](https://evidence-appraisal-tool.onrender.com)
@@ -20,6 +23,18 @@ Full-stack research prototype for structured and transparent AMSTAR 2 appraisal 
 - Responsive React interface
 - Automated backend and frontend tests
 - GitHub Actions continuous integration
+
+## Security and DevSecOps
+
+- CodeQL static application security testing for C# and JavaScript/TypeScript
+- Dependabot monitoring for NuGet, npm and GitHub Actions dependencies
+- Automated build, test, lint and security checks on pushes and pull requests
+- Least-privilege GitHub Actions permissions with read-only repository contents
+- Local secrets excluded through `.gitignore`; no credentials are committed
+- Published security policy and private-first vulnerability reporting guidance
+- SHA-256 report verification for exported assessments
+
+See [SECURITY.md](SECURITY.md) for responsible vulnerability reporting.
 
 ## Methodological safeguards
 
