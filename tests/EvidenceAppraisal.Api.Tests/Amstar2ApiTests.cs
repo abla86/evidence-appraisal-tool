@@ -69,7 +69,6 @@ public sealed class Amstar2ApiTests :
 
     private static Amstar2Assessment
         CreateValidAssessment()
-   ()
     {
         int[] criticalItems =
         [
