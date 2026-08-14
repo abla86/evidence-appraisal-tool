@@ -39,7 +39,7 @@ app.UseCors("LocalReactFrontend");
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
-app.MapGet("/", () => Results.Ok(new
+app.MapGet("/api", () => Results.Ok(new
 {
     application = "Evidence Appraisal Tool API",
     status = "Research prototype",
