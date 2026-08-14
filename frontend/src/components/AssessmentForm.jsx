@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import FinalAssessment from './FinalAssessment';
 import {
   createAssessment,
   createEmptyAmstar2Items,
@@ -47,6 +48,10 @@ export default function AssessmentForm({
   const [serverErrors, setServerErrors] =
     useState([]);
   const [result, setResult] = useState(null);
+  const [
+    validatedAssessment,
+    setValidatedAssessment,
+  ] = useState(null);
   const [submitting, setSubmitting] =
     useState(false);
 
@@ -62,6 +67,7 @@ export default function AssessmentForm({
     value,
   ) {
     setResult(null);
+    setValidatedAssessment(null);
     setServerErrors([]);
 
     setItems((current) =>
@@ -79,6 +85,7 @@ export default function AssessmentForm({
   async function handleSubmit(event) {
     event.preventDefault();
     setResult(null);
+    setValidatedAssessment(null);
     setServerErrors([]);
 
     const nextErrors = validateItemDrafts(
@@ -111,6 +118,7 @@ export default function AssessmentForm({
 
       if (validation.isValid) {
         setResult(validation);
+        setValidatedAssessment(assessment);
       } else {
         setServerErrors(
           validation.errors ?? [
@@ -468,6 +476,12 @@ export default function AssessmentForm({
             kvalitetskonklusjon.
           </span>
         </div>
+      )}
+
+      {validatedAssessment && (
+        <FinalAssessment
+          assessment={validatedAssessment}
+        />
       )}
     </section>
   );
