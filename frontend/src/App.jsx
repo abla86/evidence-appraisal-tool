@@ -5,37 +5,30 @@ import {
 } from './api/amstarApi';
 import AssessmentForm from './components/AssessmentForm';
 import PreAppraisalSetup from './components/PreAppraisalSetup';
+import ResearchModuleHub from './components/ResearchModuleHub';
 import './App.css';
 
 function App() {
   const [metadata, setMetadata] = useState(null);
   const [apiStatus, setApiStatus] = useState('Checking');
   const [error, setError] = useState('');
-  const [assessmentSetup, setAssessmentSetup] =
-    useState(null);
+  const [assessmentSetup, setAssessmentSetup] = useState(null);
 
   useEffect(() => {
     let active = true;
 
     async function loadApplicationData() {
       try {
-        const [health, instrumentMetadata] =
-          await Promise.all([
-            getHealth(),
-            getAmstar2Metadata(),
-          ]);
+        const [health, instrumentMetadata] = await Promise.all([
+          getHealth(),
+          getAmstar2Metadata(),
+        ]);
 
-        if (!active) {
-          return;
-        }
-
+        if (!active) return;
         setApiStatus(health.status);
         setMetadata(instrumentMetadata);
       } catch {
-        if (!active) {
-          return;
-        }
-
+        if (!active) return;
         setApiStatus('Unavailable');
         setError(
           'Kunne ikke koble til API-et. Kontroller at backend kjører på port 5237.',
@@ -44,28 +37,20 @@ function App() {
     }
 
     loadApplicationData();
-
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, []);
 
   return (
     <main className="app-shell">
       <header className="hero">
         <div>
-          <p className="eyebrow">
-            Forskningsprototype
-          </p>
-
+          <p className="eyebrow">Forskningsverktøy</p>
           <h1>Evidence Appraisal Tool</h1>
-
           <p className="hero-text">
-            Transparent og etterprøvbar støtte for
-            strukturert kritisk vurdering.
+            Transparent og etterprøvbar støtte for kritisk vurdering,
+            retningslinjevurdering og vurdering av sikkerhet i dokumentasjonen.
           </p>
         </div>
-
         <div
           className={`status status-${apiStatus.toLowerCase()}`}
           role="status"
@@ -77,20 +62,14 @@ function App() {
       </header>
 
       {error && (
-        <section
-          className="message message-error"
-          role="alert"
-        >
+        <section className="message message-error" role="alert">
           <h2>Tilkoblingsfeil</h2>
           <p>{error}</p>
         </section>
       )}
 
       {!metadata && !error && (
-        <section
-          className="message"
-          aria-live="polite"
-        >
+        <section className="message" aria-live="polite">
           <p>Laster metodeinformasjon …</p>
         </section>
       )}
@@ -99,39 +78,22 @@ function App() {
         <>
           <section className="instrument-card">
             <div>
-              <p className="eyebrow">
-                Aktiv modul
-              </p>
-
+              <p className="eyebrow">Systematiske oversikter</p>
               <h2>
                 {metadata.instrumentName}{' '}
-                <span>
-                  ({metadata.instrumentVersion})
-                </span>
+                <span>({metadata.instrumentVersion})</span>
               </h2>
-
               <p>
                 Instrumentet inneholder{' '}
-                <strong>
-                  {metadata.totalItems} punkter
-                </strong>
-                .
+                <strong>{metadata.totalItems} punkter</strong>.
               </p>
             </div>
-
             <div className="critical-domains">
-              <h3>
-                Foreslåtte kritiske standarddomener
-              </h3>
-
+              <h3>Foreslåtte kritiske standarddomener</h3>
               <ul aria-label="Foreslåtte kritiske domener">
-                {metadata.proposedDefaultCriticalDomains.map(
-                  (item) => (
-                    <li key={item}>
-                      Punkt {item}
-                    </li>
-                  ),
-                )}
+                {metadata.proposedDefaultCriticalDomains.map((item) => (
+                  <li key={item}>Punkt {item}</li>
+                ))}
               </ul>
             </div>
           </section>
@@ -139,74 +101,52 @@ function App() {
           <section className="notice notice-warning">
             <h2>Metodisk avgrensning</h2>
             <p>{metadata.criticalDomainNotice}</p>
-            <p>
-              <strong>Viktig:</strong>{' '}
-              {metadata.scoringNotice}
-            </p>
+            <p><strong>Viktig:</strong> {metadata.scoringNotice}</p>
           </section>
 
           <div className="capability-grid">
             <section className="capability-card">
               <h2>Tilgjengelig nå</h2>
-
               <ul>
-                {metadata.currentCapabilities.map(
-                  (capability) => (
-                    <li key={capability}>
-                      <span
-                        className="icon icon-available"
-                        aria-hidden="true"
-                      >
-                        ✓
-                      </span>
-                      {capability}
-                    </li>
-                  ),
-                )}
+                {metadata.currentCapabilities.map((capability) => (
+                  <li key={capability}>
+                    <span className="icon icon-available" aria-hidden="true">✓</span>
+                    {capability}
+                  </li>
+                ))}
               </ul>
             </section>
-
             <section className="capability-card">
               <h2>Ikke tilgjengelig ennå</h2>
-
               <ul>
-                {metadata.unavailableCapabilities.map(
-                  (capability) => (
-                    <li key={capability}>
-                      <span
-                        className="icon icon-unavailable"
-                        aria-hidden="true"
-                      >
-                        —
-                      </span>
-                      {capability}
-                    </li>
-                  ),
-                )}
+                {metadata.unavailableCapabilities.map((capability) => (
+                  <li key={capability}>
+                    <span className="icon icon-unavailable" aria-hidden="true">—</span>
+                    {capability}
+                  </li>
+                ))}
               </ul>
             </section>
           </div>
 
           <PreAppraisalSetup
-            defaultCriticalDomains={
-              metadata.proposedDefaultCriticalDomains
-            }
+            defaultCriticalDomains={metadata.proposedDefaultCriticalDomains}
             onConfirmed={setAssessmentSetup}
           />
+          {assessmentSetup && <AssessmentForm setup={assessmentSetup} />}
 
-          {assessmentSetup && (
-            <AssessmentForm
-              setup={assessmentSetup}
-            />
-          )}
+          <ResearchModuleHub />
 
           <section className="notice">
             <h2>Forskningsmessig sikkerhet</h2>
             <p>
-              Denne versjonen beregner ingen
-              kvalitetskonklusjon, lagrer ingen
-              forskningsdata og erstatter ikke
-              forskerens metodiske vurdering.
+              Appen strukturerer, validerer og dokumenterer forskerens vurderinger.
+              Den avgjør ikke studiekvalitet automatisk og erstatter ikke autoriserte
+              instrumenter, metodeveiledning eller forskerens faglige skjønn.
+            </p>
+            <p>
+              Ikke registrer personopplysninger, helseopplysninger eller konfidensielle
+              forskningsdata før godkjent lagringsløsning og tilgangsstyring er etablert.
             </p>
           </section>
         </>
