@@ -1,5 +1,10 @@
 # Evidence Appraisal Tool
 
+## Live demo
+
+[Open Evidence Appraisal Tool](https://evidence-appraisal-tool.onrender.com)
+
+The free Render service may require up to approximately 50 seconds to start after inactivity.
 Full-stack research prototype for structured and transparent AMSTAR 2 appraisal workflows.
 
 ## Features
